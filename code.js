@@ -31,14 +31,14 @@
 // aList.appendChild(aAnimal4.element);
 
 let aData = [
-  { type: "elephant", weight: 660 },
-  { type: "rabbit", speed: 44 },
+  { type: "Elephant", weight: 660 },
+  { type: "Rabbit", speed: 44 },
   { type: "penguin", swimmingSpeed: 750 },
   { type: "elephant", weight: 600 },
   { type: "penguin", swimmingSpeed: 60 },
 ];
 
-//creating Animal class that define the type of the animal, create and return an HTML element with the animal image.
+//Animal class that define the type of the animal, create and return an element with the animal image.
 class Animal {
   constructor(type) {
     this.type = type;
@@ -60,7 +60,7 @@ class Animal {
   }
 }
 
-//creating more specific animals classes, with specific parameter and a specific paragraph each, that extends the Animal abilities.
+//more specific animals classes, with specific parameter and a specific paragraph each, that extends the Animal abilities.
 class Elephant extends Animal {
   constructor(type, weight, element) {
     super(type, element);
@@ -70,7 +70,7 @@ class Elephant extends Animal {
     this.element.appendChild(text);
   }
 }
-
+//_____________________________________________________________________
 class Rabbit extends Animal {
   constructor(type, speed, element) {
     super(type, element);
@@ -80,7 +80,7 @@ class Rabbit extends Animal {
     this.element.appendChild(text);
   }
 }
-
+//_____________________________________________________________________
 class Penguin extends Animal {
   constructor(type, swimmingSpeed, element) {
     super(type, element);
@@ -91,11 +91,13 @@ class Penguin extends Animal {
   }
 }
 
-//creating Zoo class the resive array of animals
+//Zoo class receive an array of animals objects and defines each of them according to its classType,
+//and push them to the DIV element located in the HTML body.
 class Zoo {
   constructor(animals) {
     this.animals = animals;
     this.zoo = document.getElementById("Animals_div");
+    this.buttons = document.getElementById("Buttons_div");
     this.deletedAnimals = [];
     this.animalsToDelete = [];
     this.openTheZoo();
@@ -103,19 +105,18 @@ class Zoo {
 
   openTheZoo() {
     let animalInstance;
-
+  //the buttons that delete and returns animals.
     let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "delete all";
+    deleteBtn.innerHTML = "delete all except penguins";
     deleteBtn.addEventListener("click", () =>{ this.deleteAllExeptPenguins(this) });
 
     let returnBtn = document.createElement("button");
     returnBtn.innerHTML = "return all";
     returnBtn.addEventListener("click", () =>{ this.returnAnimals(this) });
 
-
-    this.zoo.appendChild(deleteBtn)
-    this.zoo.appendChild(returnBtn)
-
+    this.buttons.appendChild(deleteBtn)
+    this.buttons.appendChild(returnBtn)
+  //defines every animal by his classType
     this.animals.forEach((animal) => {
       switch (animal.type.toLowerCase()) {
         case "elephant":
@@ -135,18 +136,21 @@ class Zoo {
   }
 
   enterAnimal(animal){
+    //if the animal is not a penguin he is saved in this array to delete them quickly, 
+    //defines click event and push it to the zoo element.
     if(animal.type !== "penguin") this.animalsToDelete.push(animal);
-    animal.element.addEventListener("click", () => {this.saveCurrentAnimal(animal)});
+    animal.element.addEventListener("click", () => {this.DeleteCurrentAnimal(animal)});
     this.zoo.appendChild(animal.element);
   }
 
-  saveCurrentAnimal(animal) {
+  DeleteCurrentAnimal(animal) {
+    //save the animal in this array to return him quickly, and use his method to delete.
     this.deletedAnimals.push(animal);
     animal.delete();
   }
 
   deleteAllExeptPenguins(zoo){
-
+    //push all the animals from 'toDelete' array to 'Deleted' array and delete them.
     zoo.animalsToDelete.forEach(animal => {
       this.deletedAnimals.push(animal);
       animal.delete();
@@ -154,7 +158,7 @@ class Zoo {
   }
 
   returnAnimals(zoo){
-    console.log(zoo.deletedAnimals)
+    //loop over 'Deleted' array and returns every animal to the zoo element.
     zoo.deletedAnimals.forEach(animal => { zoo.enterAnimal(animal)});
     zoo.deletedAnimals = [];
   }
